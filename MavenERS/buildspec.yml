@@ -7,4 +7,4 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: 'MavenERS/target/ers'
+  base-directory: 'MavenERS/target/EmployeeReimbursementSystemApi'
