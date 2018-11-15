@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -58,6 +59,7 @@ public class UserController {
 				resp.setStatus(404);
 				return;
 			}
+			
 		} else if (uriArray.length == 2) {
 			try {
 				int id = Integer.parseInt(uriArray[1]);
@@ -74,6 +76,7 @@ public class UserController {
 				resp.setStatus(400);
 				return;
 			}
+			
 		} else {
 			resp.setStatus(404);
 		}
@@ -90,13 +93,25 @@ public class UserController {
 					new UserRoles(1, "EMPLOYEE"));
 			us.AddUser(user);
 			resp.setStatus(200);
+			
 		} else if ("users/login".equals(uri)) {
 			Credential cred = om.readValue(req.getReader(), Credential.class);
 			log.info("attempting to log in with cred: " + cred);
 			if (!us.login(cred, req.getSession())) {
 				resp.setStatus(403);
+			} else {
+				resp.setStatus(200);
+				String json1 = om.writeValueAsString(req.getSession().getAttribute("id"));
+				String json2 = om.writeValueAsString(req.getSession().getAttribute("role"));
+				String bothJson = "["+json1+","+json2+"]";
+				resp.getWriter().write(bothJson);
 			}
-		} else {
+			
+		} else if ("users/logout".equals(uri)) {
+			req.getSession().invalidate();
+			resp.setStatus(200);
+		}
+		else {
 			resp.setStatus(404);
 			return;
 		}

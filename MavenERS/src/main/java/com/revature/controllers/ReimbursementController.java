@@ -48,30 +48,41 @@ public class ReimbursementController {
 		String[] uriArray = uri.split("/");
 		System.out.println(Arrays.toString(uriArray));
 		if (uriArray.length == 1) {
-			log.info("retreiving all reimbursements");
-			List<Reimbursement> reimbursements = rs.getAllReimbursements();
-			System.out.println(reimbursements);
-			ResponseMapper.convertAndAttach(reimbursements, resp);
-			resp.setStatus(200);
+			System.out.println(req.getSession().getAttribute("id"));
+			
+//			if (req.getSession().getAttribute("id") != null) {
+				log.info("retreiving all reimbursements");
+				List<Reimbursement> reimbursements = rs.getAllReimbursements();
+				System.out.println(reimbursements);
+				ResponseMapper.convertAndAttach(reimbursements, resp);
+				resp.setStatus(200);
+//			} else {
+//				resp.setStatus(403);
+//			}
 			return;
-		} else if (uriArray.length == 3 && uriArray[1].equals("user")) {
-			try {
+			
+		} else if (uriArray.length == 3 && "user".equals(uriArray[1])) {
+			System.out.println(req.getSession().getAttribute("id"));
+			
+			if (req.getSession().getAttribute("id") != null) {
 				int id = Integer.parseInt(uriArray[2]);
 				log.info("retreiving reimbursements of user with id: " + id);
 				List<Reimbursement> reimbursements = rs.getUsersReimbursements(id);
 				ResponseMapper.convertAndAttach(reimbursements, resp);
 				resp.setStatus(200);
-				return;
-			} catch (NumberFormatException e) {
-				resp.setStatus(400);
-				return;
+			} else {
+				resp.setStatus(403);
 			}
+			return;
 
-		} else {
+		} else if (uriArray.length == 2 && "test".equals(uriArray[1])) {
+			ResponseMapper.convertAndAttach("Test Works", resp);
+		}
+		else {
 			resp.setStatus(404);
 		}
 	}
-	
+
 	private void processPost(HttpServletRequest req, HttpServletResponse resp)
 			throws JsonParseException, JsonMappingException, IOException {
 		String uri = req.getRequestURI();
@@ -79,17 +90,18 @@ public class ReimbursementController {
 		uri = uri.substring(context.length() + 2, uri.length());
 		if ("reimbursements".equals(uri)) {
 			log.info("saving new reimbursement");
-			
+
 			java.util.Date utilDate = new java.util.Date();
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(utilDate);
 			java.sql.Timestamp sq = new java.sql.Timestamp(utilDate.getTime());
-			
+
 			Reimbursement reimbursement = new Reimbursement(100000.0, sq, "receipt again", 7,
 					new ReimbursementStatus(1, "PENDING"), new ReimbursementType(2, "TRAVEL"));
-			
+
 			rs.addReimbursementRequest(reimbursement);
 			resp.setStatus(200);
+			
 		} else {
 			resp.setStatus(404);
 			return;

@@ -36,12 +36,8 @@ public class UsersServiceImpl implements UsersService{
 	public boolean login(Credential cred, HttpSession httpSession) {
 		Users u = ud.findByUsernameAndPassword(cred.getUsername(), cred.getPassword());
 		if (u != null) {
-			try {
-				httpSession.setAttribute("user", om.writeValueAsString(u));
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
 			httpSession.setAttribute("id", u.getUserId());
+			httpSession.setAttribute("role", u.getRole().getRole());
 			return true;
 		} 
 		return false;
