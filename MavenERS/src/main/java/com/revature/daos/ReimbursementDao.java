@@ -13,4 +13,6 @@ public interface ReimbursementDao {
 	List<Reimbursement> getReimbursementByUser(int userId); 
 	
 	void addReimbursement(Reimbursement reimbursement);
+	
+	void updateReimbursement(int reimbursementId, java.sql.Timestamp sq, int userId, int statusId);
 }

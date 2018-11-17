@@ -43,7 +43,7 @@
   NAV
 *****************************/
 #nav-bar {
-  background-color: #e3f2fd !important;
+  background-color: #b4d6ee !important;
   border-bottom: 10px !important;
 }
 
@@ -83,9 +83,17 @@ nav {
   justify-content: right;
 }
 
+.white {
+  color: white;
+}
+
 /*****************************
   TABLE
 *****************************/
+tr > td {
+  vertical-align: middle !important;
+}
+
 .red {
   color: red;
 }
@@ -96,4 +104,9 @@ nav {
 
 .yellow {
   color: yellow;
+}
+
+.space-around {
+  display: flex !important;
+  justify-content: space-between !important;
 }

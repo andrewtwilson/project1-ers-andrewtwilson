@@ -13,4 +13,6 @@ public interface ReimbursementService {
 	List<Reimbursement> getUsersReimbursements(int userId); 
 	
 	void addReimbursementRequest(Reimbursement reimbursement);
+	
+	void updateReimbursement(int reimbursementId, java.sql.Timestamp sq, int userId, int statusId);
 }

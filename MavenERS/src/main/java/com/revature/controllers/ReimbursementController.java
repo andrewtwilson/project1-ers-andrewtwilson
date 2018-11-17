@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.dto.Credential;
 import com.revature.model.Reimbursement;
 import com.revature.model.ReimbursementStatus;
 import com.revature.model.ReimbursementType;
@@ -32,7 +33,10 @@ public class ReimbursementController {
 			break;
 		case "POST":
 			processPost(req, resp);
-			return;
+			break;
+		case "PATCH":
+			processPatch(req, resp);
+			break;
 		case "OPTIONS":
 			return;
 		default:
@@ -48,22 +52,24 @@ public class ReimbursementController {
 		String[] uriArray = uri.split("/");
 		System.out.println(Arrays.toString(uriArray));
 		if (uriArray.length == 1) {
+			// get all reimbursements
 			System.out.println(req.getSession().getAttribute("id"));
-			
-//			if (req.getSession().getAttribute("id") != null) {
-				log.info("retreiving all reimbursements");
-				List<Reimbursement> reimbursements = rs.getAllReimbursements();
-				System.out.println(reimbursements);
-				ResponseMapper.convertAndAttach(reimbursements, resp);
-				resp.setStatus(200);
-//			} else {
-//				resp.setStatus(403);
-//			}
+
+			if (req.getSession().getAttribute("id") != null) {
+			log.info("retreiving all reimbursements");
+			List<Reimbursement> reimbursements = rs.getAllReimbursements();
+			System.out.println(reimbursements);
+			ResponseMapper.convertAndAttach(reimbursements, resp);
+			resp.setStatus(200);
+			} else {
+				resp.setStatus(403);
+			}
 			return;
-			
+
 		} else if (uriArray.length == 3 && "user".equals(uriArray[1])) {
+			// get a users's reimbursements
 			System.out.println(req.getSession().getAttribute("id"));
-			
+
 			if (req.getSession().getAttribute("id") != null) {
 				int id = Integer.parseInt(uriArray[2]);
 				log.info("retreiving reimbursements of user with id: " + id);
@@ -77,8 +83,7 @@ public class ReimbursementController {
 
 		} else if (uriArray.length == 2 && "test".equals(uriArray[1])) {
 			ResponseMapper.convertAndAttach("Test Works", resp);
-		}
-		else {
+		} else {
 			resp.setStatus(404);
 		}
 	}
@@ -101,7 +106,40 @@ public class ReimbursementController {
 
 			rs.addReimbursementRequest(reimbursement);
 			resp.setStatus(200);
+
+		} else {
+			resp.setStatus(404);
+			return;
+		}
+	}
+
+	private void processPatch(HttpServletRequest req, HttpServletResponse resp)
+			throws JsonParseException, JsonMappingException, IOException {
+		String uri = req.getRequestURI();
+		String context = "ers";
+		uri = uri.substring(context.length() + 2, uri.length());
+		String[] uriArray = uri.split("/");
+		System.out.println(Arrays.toString(uriArray));
+
+		if (uriArray.length == 2) {
+			int reimbursementId = Integer.parseInt(uriArray[1]);
+			log.info("updating reimbursement with id: " + reimbursementId);
 			
+			java.util.Date utilDate = new java.util.Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(utilDate);
+			java.sql.Timestamp sq = new java.sql.Timestamp(utilDate.getTime());
+			
+			System.out.println(req.getSession().getAttribute("id"));
+			int userId = (int) req.getSession().getAttribute("id");
+			
+			int statusId = om.readValue(req.getReader(), int.class);
+			
+			rs.updateReimbursement(reimbursementId, sq, userId, statusId);
+			resp.setStatus(200);
+
+			return;
+
 		} else {
 			resp.setStatus(404);
 			return;

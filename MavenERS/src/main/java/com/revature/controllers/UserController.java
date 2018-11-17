@@ -30,7 +30,7 @@ public class UserController {
 		switch (method) {
 		case "GET":
 			processGet(req, resp);
-			return;
+			break;
 		case "POST":
 			processPost(req, resp);
 			break;

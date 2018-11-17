@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.revature.daos.ReimbursementDao;
@@ -21,4 +22,8 @@ public class ReimbursementServiceImpl implements ReimbursementService{
 		rd.addReimbursement(reimbursement);
 	}
 
+	@Override
+	public void updateReimbursement(int reimbursementId, Timestamp sq, int userId, int statusId) {
+		rd.updateReimbursement(reimbursementId, sq, userId, statusId);
+	}
 }

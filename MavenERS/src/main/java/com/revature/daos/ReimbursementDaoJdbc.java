@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 			PreparedStatement ps = conn
 					.prepareStatement("SELECT * FROM ers_reimbursement " + "INNER JOIN ers_reimbursement_status "
 							+ "USING (reimb_status_id) " + "INNER JOIN ers_reimbursement_type "
-							+ "USING (reimb_type_id) " + "ORDER BY reimb_status_id ASC;");
+							+ "USING (reimb_type_id) " + "ORDER BY reimb_id ASC;");
 
 			ResultSet rs = ps.executeQuery();
 
@@ -91,7 +92,7 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 			PreparedStatement ps = conn
 					.prepareStatement("SELECT * FROM ers_reimbursement " + "INNER JOIN ers_reimbursement_status "
 							+ "USING (reimb_status_id) " + "INNER JOIN ers_reimbursement_type "
-							+ "USING (reimb_type_id) " + "WHERE reimb_author=? " + "ORDER BY reimb_status_id ASC;");
+							+ "USING (reimb_type_id) " + "WHERE reimb_author=? " + "ORDER BY reimb_id ASC;");
 
 			ps.setInt(1, userId);
 			ResultSet rs = ps.executeQuery();
@@ -115,6 +116,29 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void updateReimbursement(int reimbursementId, Timestamp sq, int userId, int statusId) {
+		log.debug("Updating reimbursement with id:" + reimbursementId);
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			PreparedStatement ps = conn.prepareStatement(
+					"UPDATE ers_reimbursement " + 
+					"SET reimb_resolved=?, reimb_resolver=?, reimb_status_id=? " + 
+					"WHERE reimb_id=?;");
+
+			ps.setTimestamp(1, sq);
+			ps.setInt(2, userId);
+			ps.setInt(3, statusId);
+			ps.setInt(4, reimbursementId);
+
+			ps.executeUpdate();
+
+			return;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
 	}
 
 }
