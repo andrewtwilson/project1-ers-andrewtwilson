@@ -3,19 +3,19 @@ package com.revature.model;
 import java.sql.Timestamp;
 
 public class Reimbursement {
-	private Integer reimbursementId = -1;
-	private Double amount;
-	private java.sql.Timestamp submitted;
-	private java.sql.Timestamp resolved = null;
+	private int reimbursementId = -1;
+	private double amount;
+	private String submitted;
+	private String resolved = null;
 	private String description;
-	private Integer author;
+	private int author;
 	private Integer resolver = null;
 	private ReimbursementStatus status;
 	private ReimbursementType type;
 
 //	Called when adding a new reimbursement to the database
-	public Reimbursement(Double amount, Timestamp submitted,
-			String description, Integer author, ReimbursementStatus status, ReimbursementType type) {
+	public Reimbursement(double amount, String submitted,
+			String description, int author, ReimbursementStatus status, ReimbursementType type) {
 		super();
 		this.amount = amount;
 		this.submitted = submitted;
@@ -26,8 +26,8 @@ public class Reimbursement {
 	}
 	
 //	Called when retrieving reimbursement from the database
-	public Reimbursement(Integer reimbursementId, Double amount, Timestamp submitted, Timestamp resolved,
-			String description, Integer author, Integer resolver, ReimbursementStatus status, ReimbursementType type) {
+	public Reimbursement(int reimbursementId, double amount, String submitted, String resolved, String description,
+			int author, Integer resolver, ReimbursementStatus status, ReimbursementType type) {
 		super();
 		this.reimbursementId = reimbursementId;
 		this.amount = amount;
@@ -40,35 +40,35 @@ public class Reimbursement {
 		this.type = type;
 	}
 
-	public Integer getReimbursementId() {
+	public int getReimbursementId() {
 		return reimbursementId;
 	}
 
-	public void setReimbursementId(Integer reimbursementId) {
+	public void setReimbursementId(int reimbursementId) {
 		this.reimbursementId = reimbursementId;
 	}
 
-	public Double getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Double amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 
-	public java.sql.Timestamp getSubmitted() {
+	public String getSubmitted() {
 		return submitted;
 	}
 
-	public void setSubmitted(java.sql.Timestamp submitted) {
+	public void setSubmitted(String submitted) {
 		this.submitted = submitted;
 	}
 
-	public java.sql.Timestamp getResolved() {
+	public String getResolved() {
 		return resolved;
 	}
 
-	public void setResolved(java.sql.Timestamp resolved) {
+	public void setResolved(String resolved) {
 		this.resolved = resolved;
 	}
 
@@ -80,11 +80,11 @@ public class Reimbursement {
 		this.description = description;
 	}
 
-	public Integer getAuthor() {
+	public int getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(Integer author) {
+	public void setAuthor(int author) {
 		this.author = author;
 	}
 
@@ -104,14 +104,31 @@ public class Reimbursement {
 		this.status = status;
 	}
 
+	public ReimbursementType getType() {
+		return type;
+	}
+
+	public void setType(ReimbursementType type) {
+		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return "Reimbursement [reimbursementId=" + reimbursementId + ", amount=" + amount + ", submitted=" + submitted
+				+ ", resolved=" + resolved + ", description=" + description + ", author=" + author + ", resolver="
+				+ resolver + ", status=" + status + ", type=" + type + "]";
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-		result = prime * result + ((author == null) ? 0 : author.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(amount);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + author;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((reimbursementId == null) ? 0 : reimbursementId.hashCode());
+		result = prime * result + reimbursementId;
 		result = prime * result + ((resolved == null) ? 0 : resolved.hashCode());
 		result = prime * result + ((resolver == null) ? 0 : resolver.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -129,25 +146,16 @@ public class Reimbursement {
 		if (getClass() != obj.getClass())
 			return false;
 		Reimbursement other = (Reimbursement) obj;
-		if (amount == null) {
-			if (other.amount != null)
-				return false;
-		} else if (!amount.equals(other.amount))
+		if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
 			return false;
-		if (author == null) {
-			if (other.author != null)
-				return false;
-		} else if (!author.equals(other.author))
+		if (author != other.author)
 			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (reimbursementId == null) {
-			if (other.reimbursementId != null)
-				return false;
-		} else if (!reimbursementId.equals(other.reimbursementId))
+		if (reimbursementId != other.reimbursementId)
 			return false;
 		if (resolved == null) {
 			if (other.resolved != null)
@@ -175,21 +183,6 @@ public class Reimbursement {
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Reimbursement [reimbursementId=" + reimbursementId + ", amount=" + amount + ", submitted=" + submitted
-				+ ", resolved=" + resolved + ", description=" + description + ", author=" + author + ", resolver="
-				+ resolver + ", status=" + status + ", type=" + type + "]";
-	}
-
-	public ReimbursementType getType() {
-		return type;
-	}
-
-	public void setType(ReimbursementType type) {
-		this.type = type;
 	}
 
 }

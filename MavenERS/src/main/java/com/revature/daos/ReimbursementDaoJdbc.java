@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +26,10 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 					"INSERT INTO ers_reimbursement (reimb_amount,reimb_submitted,reimb_resolved,reimb_description,reimb_author,reimb_resolver,reimb_status_id,reimb_type_id)\r\n"
 							+ "VALUES (?,?,?,?,?,?,?,?) RETURNING reimb_id;");
 
+			System.out.println(reimbursement.getSubmitted());
+			
 			ps.setDouble(1, reimbursement.getAmount());
-			ps.setTimestamp(2, reimbursement.getSubmitted());
+			ps.setTimestamp(2, Timestamp.valueOf(reimbursement.getSubmitted()));
 			ps.setNull(3, Types.TIMESTAMP);
 			ps.setString(4, reimbursement.getDescription());
 			ps.setInt(5, reimbursement.getAuthor());
@@ -62,18 +65,22 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 			ResultSet rs = ps.executeQuery();
 
 			List<Reimbursement> reimbursementList = new ArrayList<>();
+
 			while (rs.next()) {
+				String r;
 				Integer i;
 				if (rs.getInt("reimb_resolver") == 0) {
+					r = null;
 					i = null;
 				} else {
+					r = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(rs.getTimestamp("reimb_resolved"));
 					i = rs.getInt("reimb_resolver");
 				}
 				reimbursementList.add(new Reimbursement(
 						rs.getInt("reimb_id"), 
 						rs.getDouble("reimb_amount"),
-						rs.getTimestamp("reimb_submitted"), 
-						rs.getTimestamp("reimb_resolved"),
+						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(rs.getTimestamp("reimb_submitted")), 
+						r,
 						rs.getString("reimb_description"), 
 						rs.getInt("reimb_author"), 
 						i,
@@ -99,14 +106,24 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 
 			List<Reimbursement> reimbursementList = new ArrayList<Reimbursement>();
 			while (rs.next()) {
+				String r;
+				Integer i;
+				if (rs.getInt("reimb_resolver") == 0) {
+					r = null;
+					i = null;
+				} else {
+					r = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(rs.getTimestamp("reimb_resolved"));
+					i = rs.getInt("reimb_resolver");
+				}
+				System.out.println(i);
 				reimbursementList.add(new Reimbursement(
 						rs.getInt("reimb_id"), 
 						rs.getDouble("reimb_amount"),
-						rs.getTimestamp("reimb_submitted"), 
-						rs.getTimestamp("reimb_resolved"),
+						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(rs.getTimestamp("reimb_submitted")), 
+						r,
 						rs.getString("reimb_description"), 
 						rs.getInt("reimb_author"), 
-						rs.getInt("reimb_resolver"),
+						i,
 						new ReimbursementStatus(rs.getInt("reimb_status_id"), rs.getString("reimb_status")),
 						new ReimbursementType(rs.getInt("reimb_type_id"), rs.getString("reimb_type"))));
 			}
@@ -119,7 +136,7 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 	}
 
 	@Override
-	public void updateReimbursement(int reimbursementId, Timestamp sq, int userId, int statusId) {
+	public void updateReimbursement(int reimbursementId, String sq, int userId, int statusId) {
 		log.debug("Updating reimbursement with id:" + reimbursementId);
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			PreparedStatement ps = conn.prepareStatement(
@@ -127,7 +144,7 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 					"SET reimb_resolved=?, reimb_resolver=?, reimb_status_id=? " + 
 					"WHERE reimb_id=?;");
 
-			ps.setTimestamp(1, sq);
+			ps.setTimestamp(1, Timestamp.valueOf(sq));
 			ps.setInt(2, userId);
 			ps.setInt(3, statusId);
 			ps.setInt(4, reimbursementId);

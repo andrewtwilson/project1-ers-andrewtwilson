@@ -1,6 +1,7 @@
 package com.revature.controllers;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.dto.Credential;
+import com.revature.dto.TempReimbursement;
 import com.revature.model.Reimbursement;
 import com.revature.model.ReimbursementStatus;
 import com.revature.model.ReimbursementType;
@@ -55,15 +57,15 @@ public class ReimbursementController {
 			// get all reimbursements
 			System.out.println(req.getSession().getAttribute("id"));
 
-			if (req.getSession().getAttribute("id") != null) {
+//			if (req.getSession().getAttribute("id") != null) {
 			log.info("retreiving all reimbursements");
 			List<Reimbursement> reimbursements = rs.getAllReimbursements();
-			System.out.println(reimbursements);
+			System.out.println(reimbursements.get(0).getSubmitted());
 			ResponseMapper.convertAndAttach(reimbursements, resp);
 			resp.setStatus(200);
-			} else {
-				resp.setStatus(403);
-			}
+//			} else {
+//				resp.setStatus(403);
+//			}
 			return;
 
 		} else if (uriArray.length == 3 && "user".equals(uriArray[1])) {
@@ -100,9 +102,26 @@ public class ReimbursementController {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(utilDate);
 			java.sql.Timestamp sq = new java.sql.Timestamp(utilDate.getTime());
+			String s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(sq);
+//			System.out.println(om.readValue(req.getReader(), TempReimbursement.class));
+			
+			TempReimbursement tr = om.readValue(req.getReader(), TempReimbursement.class);
+			System.out.println(tr);
+			int typeId = 0;
+			System.out.println(tr.getType());
+			if ("LODGING".equals(tr.getType())) {
+				typeId = 1;
+			} else if ("TRAVEL".equals(tr.getType())) {
+				typeId = 2;
+			} else if ("FOOD".equals(tr.getType())) {
+				typeId = 3;
+			} else if ("OTHER".equals(tr.getType())) {
+				typeId = 4;
+			}
+			System.out.println(typeId);
 
-			Reimbursement reimbursement = new Reimbursement(100000.0, sq, "receipt again", 7,
-					new ReimbursementStatus(1, "PENDING"), new ReimbursementType(2, "TRAVEL"));
+			Reimbursement reimbursement = new Reimbursement(tr.getAmount(), s, tr.getDescription(), (int) req.getSession().getAttribute("id"),
+					new ReimbursementStatus(1, "PENDING"), new ReimbursementType(typeId, "TRAVEL"));
 
 			rs.addReimbursementRequest(reimbursement);
 			resp.setStatus(200);
@@ -129,13 +148,14 @@ public class ReimbursementController {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(utilDate);
 			java.sql.Timestamp sq = new java.sql.Timestamp(utilDate.getTime());
+			String s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(sq);
 			
 			System.out.println(req.getSession().getAttribute("id"));
 			int userId = (int) req.getSession().getAttribute("id");
 			
 			int statusId = om.readValue(req.getReader(), int.class);
 			
-			rs.updateReimbursement(reimbursementId, sq, userId, statusId);
+			rs.updateReimbursement(reimbursementId, s, userId, statusId);
 			resp.setStatus(200);
 
 			return;

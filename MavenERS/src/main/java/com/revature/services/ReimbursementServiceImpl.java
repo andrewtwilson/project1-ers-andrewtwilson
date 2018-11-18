@@ -23,7 +23,7 @@ public class ReimbursementServiceImpl implements ReimbursementService{
 	}
 
 	@Override
-	public void updateReimbursement(int reimbursementId, Timestamp sq, int userId, int statusId) {
+	public void updateReimbursement(int reimbursementId, String sq, int userId, int statusId) {
 		rd.updateReimbursement(reimbursementId, sq, userId, statusId);
 	}
 }
