@@ -13,10 +13,11 @@ class AllRequestsComponent extends Component {
         })
             .then(resp => {
                 if (resp.status === 200) {
-                    return resp.json();
+
                 } else if (resp.status === 403) {
                     this.props.history.push('/home');
                 }
+                return resp.json();
             })
             .then(data => {
                 console.log(data);
@@ -34,7 +35,7 @@ class AllRequestsComponent extends Component {
                     <div className="form-group">
                         <label htmlFor="exampleFormControlSelect1">Filter By:</label>
                         <select onChange={this.changeFilterByStatus} className="form-control" id="exampleFormControlSelect1">
-                            <option></option>
+                            <option >No Filter</option>
                             <option >PENDING</option>
                             <option >APPROVED</option>
                             <option >DENIED</option>
@@ -50,7 +51,7 @@ class AllRequestsComponent extends Component {
                             <th scope="col">Time Resolved</th>
                             <th scope="col">Description</th>
                             <th scope="col">Author ID</th>
-                            <th scope="col">Resolver</th>
+                            <th scope="col">Resolver ID</th>
                             <th scope="col">Type</th>
                             <th scope="col">Status</th>
                             <th scope="col">Action</th>
@@ -62,7 +63,7 @@ class AllRequestsComponent extends Component {
                                 key={reimbursement.reimbursementId}
                                 reimbursement={reimbursement}
                                 reimbursementsUpdate={this.reimbursementsUpdate}
-                                component={"all"} />
+                                component="all" />
                         )}
                     </tbody>
                 </table>
@@ -76,10 +77,11 @@ class AllRequestsComponent extends Component {
         })
             .then(resp => {
                 if (resp.status === 200) {
-                    return resp.json();
+
                 } else if (resp.status === 403) {
                     this.props.history.push('/home');
                 }
+                return resp.json();
             })
             .then(data => {
                 console.log(data);
@@ -91,7 +93,7 @@ class AllRequestsComponent extends Component {
     }
 
     changeFilterByStatus = (event) => {
-        if (event.target.value !== '') {
+        if (event.target.value !== 'No Filter') {
             this.setState({
                 ...this.state,
                 filterByStatus: event.target.value

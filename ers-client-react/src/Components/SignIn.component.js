@@ -37,12 +37,17 @@ export class SignInComponent extends React.Component {
     })
       .then(res => {
         if (res.status === 200) {
-          this.props.signIn();
           this.props.history.push('/home');
-          return res.json();
         }
+        return res.json();
       })
-      .then(data => {console.log(data)})
+      .then(data => {
+        sessionStorage.setItem("userId", data[0]);
+        sessionStorage.setItem("userRole", data[1])
+        this.props.signIn();
+        // console.log(sessionStorage.getItem("userId"));
+        // console.log(sessionStorage.getItem("userRole"));
+      })
       .catch(err => {
         console.log(err);
       })

@@ -14,6 +14,7 @@ class SignOutComponent extends Component {
             .then(res => {
               if (res.status === 200) {
                 this.props.signOut();
+                sessionStorage.clear();
                 this.props.history.push('/home');
               }
             })

@@ -1,6 +1,10 @@
 import React, { PureComponent } from 'react';
+import * as $ from 'jquery';
 
 class ReimbursementComponent extends PureComponent {
+    componentDidMount() {
+        $('[data-toggle="tooltip"]').tooltip();
+      }
 
     render() {
         const { reimbursementId, amount, submitted, resolved, description, author, resolver, status, type } = this.props.reimbursement;
@@ -21,7 +25,10 @@ class ReimbursementComponent extends PureComponent {
                 <td>{amount}</td>
                 <td>{submitted}</td>
                 <td>{(resolved !== null) ? resolved : "N/A"}</td>
-                <td>{description}</td>
+                {description.length <= 20 ?
+                <td> {description} </td> :
+                this.descriptionSubstring(description)
+                }
                 <td>{author}</td>
                 <td>{(resolved !== null) ? resolver : "N/A"}</td>
                 <td>{type.type}</td>
@@ -90,6 +97,12 @@ class ReimbursementComponent extends PureComponent {
             .catch(err => {
                 console.log(err);
             })
+    }
+
+    descriptionSubstring = (description) => {
+        let descriptionSubstring = description.substring(0,19);
+
+        return <td data-toggle="tooltip" data-placement="top" title={description}> {descriptionSubstring}... </td>
     }
 }
 

@@ -15,7 +15,6 @@ class App extends Component {
     this.state = {
       signedIn: false
     }
-    // sessionStorage.setItem("signedin", false);
   }
 
   render() {
