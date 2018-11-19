@@ -71,7 +71,7 @@ class NewReimbursementComponent extends Component {
               <label htmlFor="amount" className="col col-form-label">
                 Amount
               </label>
-              <div className="col-sm-6">
+              <div className="col-sm-3">
                 <input
                   type="text"
                   className="form-control"
@@ -89,7 +89,7 @@ class NewReimbursementComponent extends Component {
               <label htmlFor="description" className="col col-form-label">
                 Description
               </label>
-              <div className="col-sm-6">
+              <div className="col-sm-3">
                 <textarea
                   className="text-area text-box multi-line"
                   data-val="true"
@@ -110,7 +110,7 @@ class NewReimbursementComponent extends Component {
               <label htmlFor="inputState" className="col col-form-label">
                 Type
               </label>
-              <div className="col-sm-6">
+              <div className="col-sm-3">
                 <select
                   id="inputState"
                   className="form-control"

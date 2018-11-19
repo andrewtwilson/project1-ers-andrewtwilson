@@ -52,25 +52,21 @@ public class ReimbursementController {
 		String context = "ers";
 		uri = uri.substring(context.length() + 2, uri.length());
 		String[] uriArray = uri.split("/");
-		System.out.println(Arrays.toString(uriArray));
 		if (uriArray.length == 1) {
 			// get all reimbursements
-			System.out.println(req.getSession().getAttribute("id"));
 
-//			if (req.getSession().getAttribute("id") != null) {
+			if (req.getSession().getAttribute("id") != null) {
 			log.info("retreiving all reimbursements");
 			List<Reimbursement> reimbursements = rs.getAllReimbursements();
-			System.out.println(reimbursements.get(0).getSubmitted());
 			ResponseMapper.convertAndAttach(reimbursements, resp);
 			resp.setStatus(200);
-//			} else {
-//				resp.setStatus(403);
-//			}
+			} else {
+				resp.setStatus(403);
+			}
 			return;
 
 		} else if (uriArray.length == 3 && "user".equals(uriArray[1])) {
 			// get a users's reimbursements
-			System.out.println(req.getSession().getAttribute("id"));
 
 			if (req.getSession().getAttribute("id") != null) {
 				int id = Integer.parseInt(uriArray[2]);
@@ -103,12 +99,9 @@ public class ReimbursementController {
 			cal.setTime(utilDate);
 			java.sql.Timestamp sq = new java.sql.Timestamp(utilDate.getTime());
 			String s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(sq);
-//			System.out.println(om.readValue(req.getReader(), TempReimbursement.class));
 			
 			TempReimbursement tr = om.readValue(req.getReader(), TempReimbursement.class);
-			System.out.println(tr);
 			int typeId = 0;
-			System.out.println(tr.getType());
 			if ("LODGING".equals(tr.getType())) {
 				typeId = 1;
 			} else if ("TRAVEL".equals(tr.getType())) {
@@ -118,7 +111,6 @@ public class ReimbursementController {
 			} else if ("OTHER".equals(tr.getType())) {
 				typeId = 4;
 			}
-			System.out.println(typeId);
 
 			Reimbursement reimbursement = new Reimbursement(tr.getAmount(), s, tr.getDescription(), (int) req.getSession().getAttribute("id"),
 					new ReimbursementStatus(1, "PENDING"), new ReimbursementType(typeId, "TRAVEL"));
@@ -138,7 +130,6 @@ public class ReimbursementController {
 		String context = "ers";
 		uri = uri.substring(context.length() + 2, uri.length());
 		String[] uriArray = uri.split("/");
-		System.out.println(Arrays.toString(uriArray));
 
 		if (uriArray.length == 2) {
 			int reimbursementId = Integer.parseInt(uriArray[1]);
@@ -150,7 +141,6 @@ public class ReimbursementController {
 			java.sql.Timestamp sq = new java.sql.Timestamp(utilDate.getTime());
 			String s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(sq);
 			
-			System.out.println(req.getSession().getAttribute("id"));
 			int userId = (int) req.getSession().getAttribute("id");
 			
 			int statusId = om.readValue(req.getReader(), int.class);

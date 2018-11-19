@@ -45,7 +45,6 @@ public class UserController {
 		String context = "ers";
 		uri = uri.substring(context.length() + 2, uri.length());
 		String[] uriArray = uri.split("/");
-		System.out.println(Arrays.toString(uriArray));
 		if (uriArray.length == 1) {
 			try {
 				log.info("retreiving all users");

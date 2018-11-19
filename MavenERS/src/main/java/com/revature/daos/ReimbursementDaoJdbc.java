@@ -25,8 +25,6 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO ers_reimbursement (reimb_amount,reimb_submitted,reimb_resolved,reimb_description,reimb_author,reimb_resolver,reimb_status_id,reimb_type_id)\r\n"
 							+ "VALUES (?,?,?,?,?,?,?,?) RETURNING reimb_id;");
-
-			System.out.println(reimbursement.getSubmitted());
 			
 			ps.setDouble(1, reimbursement.getAmount());
 			ps.setTimestamp(2, Timestamp.valueOf(reimbursement.getSubmitted()));
@@ -115,7 +113,6 @@ public class ReimbursementDaoJdbc implements ReimbursementDao {
 					r = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(rs.getTimestamp("reimb_resolved"));
 					i = rs.getInt("reimb_resolver");
 				}
-				System.out.println(i);
 				reimbursementList.add(new Reimbursement(
 						rs.getInt("reimb_id"), 
 						rs.getDouble("reimb_amount"),
